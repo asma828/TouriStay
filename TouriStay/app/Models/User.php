@@ -12,6 +12,16 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function annonces()
+    {
+        return $this->hasMany(Annonce::class);
+    }
+
+    public function favorites()
+    {
+        return $this->belongsToMany(Annonce::class, 'favorites')->withTimestamps();
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +31,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        
     ];
 
     /**
