@@ -18,10 +18,11 @@ return new class extends Migration
             $table->text('description');
             $table->string('ville');
             $table->decimal('prix', 10, 2);
-            $table->json('equipements'); 
+            $table->string('equipements'); 
             $table->date('disponible_du');
             $table->date('disponible_au');
-            $table->json('images');
+            $table->string('images');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
