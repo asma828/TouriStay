@@ -62,8 +62,12 @@
                         </button>
                         <div class="relative">
                             <button class="flex items-center text-gray-700 focus:outline-none">
-                                <img src="https://via.placeholder.com/40" alt="Admin Avatar" class="h-8 w-8 rounded-full object-cover">
-                                <span class="ml-2">Admin</span>
+                                @if(auth()->user()->avatar)
+                                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Admin Avatar" class="h-8 w-8 rounded-full object-cover">
+                                @else
+                                    <img src="https://via.placeholder.com/40" alt="Admin Avatar" class="h-8 w-8 rounded-full object-cover">
+                                @endif
+                                <span class="ml-2">{{ auth()->user()->name }}</span>
                                 <i class="fas fa-chevron-down ml-2 text-xs"></i>
                             </button>
                         </div>
@@ -73,6 +77,12 @@
 
             <!-- Content -->
             <main class="flex-1 overflow-y-auto p-6">
+                @if(session('success'))
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+                        <p>{{ session('success') }}</p>
+                    </div>
+                @endif
+
                 <h1 class="text-2xl font-bold text-gray-800 mb-6">Vue d'ensemble</h1>
                 
                 <!-- Stats Cards -->
@@ -84,8 +94,7 @@
                             </div>
                             <div class="ml-4">
                                 <h3 class="text-gray-500 text-sm font-medium">Utilisateurs inscrits</h3>
-                                <p class="text-2xl font-bold text-gray-800">2,547</p>
-                                <p class="text-green-500 text-sm"><i class="fas fa-arrow-up mr-1"></i>12% ce mois</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ $stats['users_count'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -97,8 +106,7 @@
                             </div>
                             <div class="ml-4">
                                 <h3 class="text-gray-500 text-sm font-medium">Annonces actives</h3>
-                                <p class="text-2xl font-bold text-gray-800">1,204</p>
-                                <p class="text-green-500 text-sm"><i class="fas fa-arrow-up mr-1"></i>8% ce mois</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ $stats['annonces_count'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -110,8 +118,7 @@
                             </div>
                             <div class="ml-4">
                                 <h3 class="text-gray-500 text-sm font-medium">Réservations</h3>
-                                <p class="text-2xl font-bold text-gray-800">847</p>
-                                <p class="text-green-500 text-sm"><i class="fas fa-arrow-up mr-1"></i>24% ce mois</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ $stats['reservations_count'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -123,8 +130,7 @@
                             </div>
                             <div class="ml-4">
                                 <h3 class="text-gray-500 text-sm font-medium">Signalements</h3>
-                                <p class="text-2xl font-bold text-gray-800">12</p>
-                                <p class="text-red-500 text-sm"><i class="fas fa-arrow-down mr-1"></i>3% ce mois</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ $stats['signalements_count'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -147,106 +153,53 @@
                     </div>
                 </div>
                 
-                <!-- Recent Listings -->
-                <div class="bg-white rounded-lg shadow-md mb-8">
-                    <div class="flex items-center justify-between p-6 border-b">
-                        <h2 class="text-gray-800 text-lg font-semibold">Annonces récentes</h2>
-                        <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Voir toutes</a>
+                      <!-- Recent Listings -->
+                      <div class="bg-white rounded-lg shadow-md mb-8">
+                        <div class="flex items-center justify-between p-6 border-b">
+                            <h2 class="text-gray-800 text-lg font-semibold">Annonces récentes</h2>
+                            <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Voir toutes</a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ville</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Propriétaire</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @forelse($annonces as $annonce)
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{{ $annonce->id }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $annonce->titre }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $annonce->ville }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $annonce->user->name }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $annonce->prix }} €/nuit</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <div class="flex space-x-3">
+                                                <a href="#" class="text-blue-600 hover:text-blue-900"><i class="fas fa-eye"></i></a>
+                                                <a href="#" class="text-yellow-600 hover:text-yellow-900"><i class="fas fa-edit"></i></a>
+                                                <form action="{{ route('admin.annonces.delete', $annonce->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Aucune annonce disponible</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ville</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Propriétaire</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#1254</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Appartement moderne</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Casablanca</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Ahmed K.</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">75 €/nuit</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Actif
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <div class="flex space-x-3">
-                                            <a href="#" class="text-blue-600 hover:text-blue-900"><i class="fas fa-eye"></i></a>
-                                            <a href="#" class="text-yellow-600 hover:text-yellow-900"><i class="fas fa-edit"></i></a>
-                                            <a href="#" class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#1253</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Villa avec piscine</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Madrid</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Miguel S.</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">150 €/nuit</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Actif
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <div class="flex space-x-3">
-                                            <a href="#" class="text-blue-600 hover:text-blue-900"><i class="fas fa-eye"></i></a>
-                                            <a href="#" class="text-yellow-600 hover:text-yellow-900"><i class="fas fa-edit"></i></a>
-                                            <a href="#" class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#1252</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Appartement centre-ville</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Lisbonne</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">João F.</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95 €/nuit</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                            En attente
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <div class="flex space-x-3">
-                                            <a href="#" class="text-blue-600 hover:text-blue-900"><i class="fas fa-eye"></i></a>
-                                            <a href="#" class="text-yellow-600 hover:text-yellow-900"><i class="fas fa-edit"></i></a>
-                                            <a href="#" class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#1251</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Maison traditionnelle</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rabat</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Youssef M.</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">85 €/nuit</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                            Signalé
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <div class="flex space-x-3">
-                                            <a href="#" class="text-blue-600 hover:text-blue-900"><i class="fas fa-eye"></i></a>
-                                            <a href="#" class="text-yellow-600 hover:text-yellow-900"><i class="fas fa-edit"></i></a>
-                                            <a href="#" class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
                 
                 <!-- Recent Reports -->
                 <div class="bg-white rounded-lg shadow-md">
