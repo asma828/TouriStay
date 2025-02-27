@@ -34,6 +34,18 @@
         </div>
     </nav>
 
+@if (session('success'))
+    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 mx-4" role="alert">
+        <p>{{ session('success') }}</p>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 mx-4" role="alert">
+        <p>{{ session('error') }}</p>
+    </div>
+@endif
+
     <div class="container mx-auto px-4 py-8">
         <!-- Dashboard Header -->
         <div class="bg-gradient-to-r from-blue-500 to-green-400 rounded-xl shadow-lg p-8 mb-8">
