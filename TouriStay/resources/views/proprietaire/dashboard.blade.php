@@ -140,15 +140,16 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        <!-- Listing 1 -->
+                        <!-- Listing  -->
                         <tr>
+                            @forelse($annonces as $annonce)
+
                             <td class="py-4 px-4">
-                                @forelse($annonces as $annonce)
                                 <div class="flex items-center">
                                     <img src="{{ asset('storage/' . explode(',', $annonce->images)[0]) }}" alt="Appartement" class="h-16 w-24 object-cover rounded-md mr-3">
                                     <span class="font-medium text-gray-800">{{ $annonce->titre }}</span>
                                 </div>
-                            </td>
+                            </td>  
                             <td class="py-4 px-4 text-gray-600">{{ $annonce->ville }}, Maroc</td>
                             <td class="py-4 px-4 text-gray-600">{{ $annonce->prix }} €/nuit</td>
                             <td class="py-4 px-4 text-gray-600">Juin - Août 2030</td>
