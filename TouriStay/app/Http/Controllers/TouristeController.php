@@ -30,8 +30,8 @@ class TouristeController extends Controller
         // Get user's favorites
         $favorites = Favorite::where('user_id', Auth::id())
                           ->pluck('annonce_id');
-        
-        // Popular cities (for now it just a statique still not dynamique)
+    
+        // Popular cities 
         $popularCities = [
             ['name' => 'Casablanca', 'country' => 'Maroc', 'image' => 'casablanca.jpg'],
             ['name' => 'Madrid', 'country' => 'Espagne', 'image' => 'madrid.jpg'],
@@ -86,7 +86,7 @@ class TouristeController extends Controller
                             ->where('annonce_id', $id)
                             ->exists();
         
-        return view('touriste.annonce.show', compact('annonce', 'isFavorite'));
+        return view('annonces.show', compact('annonce', 'isFavorite'));
     }
     
     public function toggleFavorite(Request $request)
