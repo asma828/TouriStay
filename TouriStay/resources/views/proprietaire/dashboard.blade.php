@@ -20,7 +20,7 @@
                         <i class="far fa-bell text-xl"></i>
                         {{-- <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span> --}}
                     {{-- </a> --}}
-                    {{-- <a href="{{ route('proprietaire.profile') }}" class="text-gray-700 hover:text-blue-600"> --}}
+                    <a href="{{ route('profile.userprofile') }}" class="text-gray-700 hover:text-blue-600">
                         <i class="far fa-user-circle text-xl"></i>
                     </a>
                     <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition duration-300">
