@@ -169,6 +169,8 @@ class ProprietaireController extends Controller
         return redirect()->route('proprietaire.dashboard')
             ->with('success', 'L\'annonce a été supprimée avec succès!');
     }
+
+
 }
 
 
