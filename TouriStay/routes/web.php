@@ -70,6 +70,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
             ->name('admin.dashboard');
     Route::delete('/annonces/{id}', [AdminController::class, 'deleteAnnonce'])
             ->name('admin.annonces.delete');
+            Route::get('/paiement',[AdminController::class,'paiement'])
+            ->name('admin.paiement');
     });
 
 

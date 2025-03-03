@@ -24,11 +24,15 @@
                     <i class="fas fa-home mr-3"></i>
                     <span>Annonces</span>
                 </a>
-                <a href="#" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
+                <a href="{{Route('admin.paiement')}}" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
+                    <i class="fas fa-money-bill-wave mr-3"></i>
+                    <span>Paiements</span>
+                </a>
+                <a href="" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
                     <i class="fas fa-users mr-3"></i>
                     <span>Utilisateurs</span>
                 </a>
-                <a href="#" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
+                <a href="" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
                     <i class="fas fa-flag mr-3"></i>
                     <span>Signalements</span>
                 </a>

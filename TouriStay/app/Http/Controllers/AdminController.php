@@ -34,4 +34,9 @@ public function deleteAnnonce($id)
         ->with('success', 'Annonce supprimée avec succès');
 }
 
+public function paiement(){
+    return view('admin.paiement');
+
+}
+
 }
