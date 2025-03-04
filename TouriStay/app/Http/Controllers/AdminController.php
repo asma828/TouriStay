@@ -39,4 +39,9 @@ public function paiement(){
 
 }
 
+public function reservation(){
+    return view('admin.reservation');
+
+}
+
 }

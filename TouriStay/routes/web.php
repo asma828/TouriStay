@@ -72,6 +72,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
             ->name('admin.annonces.delete');
             Route::get('/paiement',[AdminController::class,'paiement'])
             ->name('admin.paiement');
+            Route::get('/reservation',[AdminController::class,'reservation'])
+            ->name('admin.reservation');
+           
     });
 
 

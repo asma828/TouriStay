@@ -16,17 +16,18 @@
                 <p class="text-gray-400 text-sm mt-1">Panneau d'administration</p>
             </div>
             <nav class="mt-5">
-                <a href="#" class="flex items-center py-3 px-6 bg-gray-700 text-blue-400 border-l-4 border-blue-400">
+                <a href="{{Route('admin.dashboard')}}" class="flex items-center py-3 px-6 bg-gray-700 text-blue-400 border-l-4 border-blue-400">
                     <i class="fas fa-tachometer-alt mr-3"></i>
                     <span>Tableau de bord</span>
                 </a>
-                <a href="#" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
-                    <i class="fas fa-home mr-3"></i>
-                    <span>Annonces</span>
-                </a>
+                
                 <a href="{{Route('admin.paiement')}}" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
                     <i class="fas fa-money-bill-wave mr-3"></i>
                     <span>Paiements</span>
+                </a>
+                <a href="{{Route('admin.reservation')}}" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
+                    <i class="fas fa-calendar-check mr-3"></i>
+                    <span>Réservations</span>
                 </a>
                 <a href="" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
                     <i class="fas fa-users mr-3"></i>
