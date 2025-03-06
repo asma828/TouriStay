@@ -6,6 +6,9 @@
     <title>TouriStay 2030 - {{ $annonce->titre }}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-gray-100">
     <!-- Navigation -->
@@ -32,7 +35,7 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Back button -->
         <div class="mb-6">
-            <a href="{{ route('proprietaire.dashboard') }}" class="flex items-center text-blue-600 hover:text-blue-800">
+            <a href="{{ route('touriste.dashboard') }}" class="flex items-center text-blue-600 hover:text-blue-800">
                 <i class="fas fa-arrow-left mr-2"></i> Retour au tableau de bord
             </a>
         </div>
@@ -92,7 +95,10 @@
                         @endforeach
                     </div>
                 </div>
-                
+                <!-- Reservation Button -->
+            <button onclick="openModal()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-medium transition duration-300 mb-6">
+                  Réserver
+            </button>
                 <!-- Stats -->
                 <div class="bg-gray-100 p-6 rounded-lg mb-8">
                     <h2 class="text-xl font-bold text-gray-800 mb-4">Statistiques de l'annonce</h2>
@@ -116,6 +122,50 @@
             </div>
         </div>
     </div>
+
+     <!-- Reservation Modal -->
+     <div id="reservationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 class="text-xl font-bold mb-4">Réserver cet hébergement</h2>
+    
+            <!-- Reservation Form -->
+            <form id="reservationForm" action="{{ route('reservation.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="annonce_id" value="{{ $annonce->id }}">
+                
+                <div class="mb-4">
+                    <label for="date_debut" class="block text-sm font-medium text-gray-700">Date d'arrivée</label>
+                    <input type="text" 
+                           id="date_debut" 
+                           name="date_debut" 
+                           placeholder="Sélectionnez la date d'arrivée"
+                           class="border p-2 w-full rounded-md"
+                           required>
+                    <div id="date_debut_error" class="text-red-500 text-sm mt-1"></div>
+                </div>
+    
+                <div class="mb-4">
+                    <label for="date_fin" class="block text-sm font-medium text-gray-700">Date de départ</label>
+                    <input type="text" 
+                           id="date_fin" 
+                           name="date_fin" 
+                           placeholder="Sélectionnez la date de départ"
+                           class="border p-2 w-full rounded-md"
+                           required>
+                    <div id="date_fin_error" class="text-red-500 text-sm mt-1"></div>
+                </div>
+    
+                <div id="reservation_global_error" class="text-red-500 text-sm mb-4"></div>
+    
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium w-full">
+                    Confirmer la réservation
+                </button>
+            </form>
+    
+            <button onclick="closeModal()" class="mt-4 text-gray-500 hover:text-gray-700">Annuler</button>
+        </div>
+    </div>
+
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white mt-12 py-8">
@@ -153,5 +203,118 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        function openModal() {
+            document.getElementById('reservationModal').classList.remove('hidden');
+        }
+    
+        function closeModal() {
+            document.getElementById('reservationModal').classList.add('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const dateDebutInput = document.querySelector('input[name="date_debut"]');
+    const dateFinInput = document.querySelector('input[name="date_fin"]');
+
+    dateDebutInput.addEventListener('change', function() {
+        dateFinInput.min = dateDebutInput.value;
+    });
+});
+    </script>
+ <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the available date range from the Blade template
+        const availableFrom = "{{ $annonce->disponible_du->format('Y-m-d') }}";
+        const availableTo = "{{ $annonce->disponible_au->format('Y-m-d') }}";
+    
+        // Clear previous error messages
+        function clearErrors() {
+            document.getElementById('date_debut_error').textContent = '';
+            document.getElementById('date_fin_error').textContent = '';
+            document.getElementById('reservation_global_error').textContent = '';
+        }
+    
+        // Initialize Flatpickr for date selection
+        const dateDebutPicker = flatpickr("#date_debut", {
+            minDate: availableFrom,
+            maxDate: availableTo,
+            dateFormat: "Y-m-d",
+            onChange: function(selectedDates, dateStr, instance) {
+                dateFinPicker.set('minDate', dateStr);
+                document.getElementById('date_debut_error').textContent = '';
+            }
+        });
+    
+        const dateFinPicker = flatpickr("#date_fin", {
+            minDate: availableFrom,
+            maxDate: availableTo,
+            dateFormat: "Y-m-d",
+            onChange: function() {
+                document.getElementById('date_fin_error').textContent = '';
+            }
+        });
+    
+        // Form submission handler
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearErrors();
+    
+            const startDate = document.getElementById('date_debut').value;
+            const endDate = document.getElementById('date_fin').value;
+    
+            // Basic validation
+            if (!startDate) {
+                document.getElementById('date_debut_error').textContent = 'Veuillez sélectionner une date d\'arrivée';
+                return;
+            }
+    
+            if (!endDate) {
+                document.getElementById('date_fin_error').textContent = 'Veuillez sélectionner une date de départ';
+                return;
+            }
+    
+            // Check availability via AJAX
+            fetch("{{ route('check.availability') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    annonce_id: "{{ $annonce->id }}",
+                    date_debut: startDate,
+                    date_fin: endDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.available) {
+                    // If available, submit the form
+                    this.submit();
+                } else {
+                    // Handle unavailability
+                    const globalErrorElement = document.getElementById('reservation_global_error');
+                    
+                    if (data.overlapping && data.overlapping.length > 0) {
+                        let errorMessage = 'Ces dates ne sont pas disponibles. ';
+                        data.overlapping.forEach(reservation => {
+                            errorMessage += `Déjà réservé du ${reservation.date_debut} au ${reservation.date_fin}. `;
+                        });
+                        globalErrorElement.textContent = errorMessage;
+                    } else {
+                        globalErrorElement.textContent = 'Ces dates ne sont pas disponibles. Veuillez choisir d\'autres dates.';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                document.getElementById('reservation_global_error').textContent = 'Une erreur est survenue. Veuillez réessayer.';
+            });
+        });
+    });
+        </script>
+
+    
 </body>
 </html>
