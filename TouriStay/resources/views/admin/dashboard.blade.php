@@ -21,13 +21,9 @@
                     <span>Tableau de bord</span>
                 </a>
                 
-                <a href="{{Route('admin.paiement')}}" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
-                    <i class="fas fa-money-bill-wave mr-3"></i>
-                    <span>Paiements</span>
-                </a>
                 <a href="{{Route('admin.reservation')}}" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
-                    <i class="fas fa-calendar-check mr-3"></i>
-                    <span>Réservations</span>
+                    <i class="fas fa-money-bill-wave mr-3"></i>
+                    <span>Paiements & Réservations</span>
                 </a>
                 <a href="" class="flex items-center py-3 px-6 text-gray-300 hover:bg-gray-700 hover:text-white">
                     <i class="fas fa-users mr-3"></i>
