@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Annonce;
+use App\Models\Reservation;
 
 
 
@@ -17,6 +18,7 @@ class ProprietaireController extends Controller
 
     // Récupérer les annonces
     $annonces = Annonce::where('user_id', $userId)
+                       ->with('reservations')
                        ->orderBy('created_at', 'desc')
                        ->paginate(10); 
 
@@ -120,7 +122,26 @@ class ProprietaireController extends Controller
             'disponible_au' => 'required|date|after:disponible_du',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
         ]);
+        // Vérifier les réservations existantes
+    $conflictingReservations = $annonce->reservations()
+    ->where(function($query) use ($validated) {
+        $query->whereBetween('date_debut', [$validated['disponible_du'], $validated['disponible_au']])
+              ->orWhereBetween('date_fin', [$validated['disponible_du'], $validated['disponible_au']])
+              ->orWhere(function($q) use ($validated) {
+                  $q->where('date_debut', '<=', $validated['disponible_du'])
+                    ->where('date_fin', '>=', $validated['disponible_au']);
+              });
+    })
+    
+    ->exists();
 
+// Si des réservations conflictuelles existent, renvoyer une erreur
+if ($conflictingReservations) {
+    return back()->withErrors([
+        'disponible_du' => 'Impossible de modifier les dates. Il existe des réservations dans cette période.',
+        'disponible_au' => 'Impossible de modifier les dates. Il existe des réservations dans cette période.'
+    ])->withInput();
+}
         // Gestion de l'image
         if ($request->hasFile('image')) {
             // Supprimer l'ancienne image si elle existe
