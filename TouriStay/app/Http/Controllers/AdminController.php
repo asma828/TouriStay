@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Annonce;
+use App\Models\Reservation;
+use Illuminate\Support\Facades\Auth;
+
+
 class AdminController extends Controller
 {
     public function index()
@@ -12,7 +16,7 @@ class AdminController extends Controller
     $stats = [
         'users_count' => User::count()-1,
         'annonces_count' => Annonce::count(),
-        'reservations_count' => 0, 
+        'reservations_count' => Reservation :: count(), 
         'signalements_count' => 0, 
     ];
 
@@ -40,8 +44,13 @@ public function paiement(){
 }
 
 public function reservation(){
-    return view('admin.reservation');
-
+    
+    $reservations = Reservation::with('annonce', 'user') // Eager load relationships
+                               ->orderBy('created_at', 'desc')
+                               ->get();
+    return view('admin.reservation', compact('reservations'));
 }
+
+
 
 }
