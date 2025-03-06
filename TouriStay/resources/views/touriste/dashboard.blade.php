@@ -2,6 +2,17 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
     <!-- Hero Section -->
     <div class="bg-gradient-to-r from-blue-500 to-green-400 rounded-xl shadow-lg p-8 mb-8">
         <h1 class="text-3xl font-bold text-white mb-4">Bienvenue sur TouriStay 2030</h1>
