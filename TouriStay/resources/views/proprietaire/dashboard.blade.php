@@ -16,13 +16,13 @@
                     <a href="{{ route('proprietaire.dashboard') }}" class="text-2xl font-bold text-blue-600">TouriStay<span class="text-green-500">2030</span></a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    {{-- <a href="{{ route('proprietaire.notifications') }}" class="text-gray-700 hover:text-blue-600 relative"> --}}
+                    <a href="{{ route('proprietaire.notifications') }}" class="text-gray-700 hover:text-blue-600 relative">
                         <i class="far fa-bell text-xl"></i>
-                        {{-- <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span> --}}
-                    {{-- </a> --}}
-                    <a href="{{ route('profile.userprofile') }}" class="text-gray-700 hover:text-blue-600">
-                        <i class="far fa-user-circle text-xl"></i>
+                        <span id="notification-counter" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center {{ Auth::user()->unreadNotifications->count() > 0 ? '' : 'hidden' }}">
+                            {{ Auth::user()->unreadNotifications->count() }}
+                        </span>
                     </a>
+                    <i class="far fa-user-circle text-xl"></i>
                     <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition duration-300">
                         Déconnexion
                     </a>
@@ -161,7 +161,7 @@
                                     <a href="{{ route('annonces.edit', $annonce->id) }}" class="text-blue-600 hover:text-blue-800">
                                         <i class="far fa-edit"></i>
                                     </a>
-                                    <a href="{{ route('annonces.show', $annonce->id) }}" class="text-yellow-600 hover:text-yellow-800">
+                                    <a href="" class="text-yellow-600 hover:text-yellow-800">
                                         <i class="far fa-eye"></i>
                                     </a>
                                     <form action="{{ route('annonces.destroy', $annonce->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce?');" class="inline">
@@ -204,47 +204,48 @@
         <!-- Reservation Requests Section -->
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Dernières demandes de réservation</h2>
-            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @forelse($annonces as $annonce)
+                @foreach ($annonce->reservations as $reservation)
                 <!-- Request 1 -->
                 <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h3 class="font-bold text-gray-800">Appartement moderne</h3>
-                            <p class="text-gray-600 text-sm">Casablanca, Maroc</p>
+                            <h3 class="font-bold text-gray-800">{{ $annonce->titre }}</h3>
+                            <p class="text-gray-600 text-sm">{{ $annonce->location }}</p>
                         </div>
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">En attente</span>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            {{ $reservation->status }}
+                        </span>
                     </div>
                     <div class="mb-4">
-                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-user mr-2 text-blue-500"></i>Pierre Dupont</p>
-                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-calendar-alt mr-2 text-blue-500"></i>15 juin - 22 juin 2030 (7 nuits)</p>
-                        <p class="text-gray-600 text-sm"><i class="fas fa-euro-sign mr-2 text-blue-500"></i>525 € (75 €/nuit)</p>
+                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-user mr-2 text-blue-500"></i>{{ $reservation->user->name }}</p>
+                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-calendar-alt mr-2 text-blue-500"></i>
+                            {{ \Carbon\Carbon::parse($reservation->date_debut)->format('d M') }} - 
+                            {{ \Carbon\Carbon::parse($reservation->date_fin)->format('d M Y') }}
+                            ({{ \Carbon\Carbon::parse($reservation->date_debut)->diffInDays(\Carbon\Carbon::parse($reservation->date_fin)) }} nuits)
+                            
+                        </p>
+                        <p class="text-gray-600 text-sm"><i class="fas fa-euro-sign mr-2 text-blue-500"></i>
+                            {{ $reservation->total_price }} € ({{ $reservation->price_per_night }} €/nuit)
+                        </p>
                     </div>
                     <div class="flex space-x-2">
-                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-300 flex-1">Accepter</button>
-                        <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-300 flex-1">Refuser</button>
+                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-300 flex-1">
+                            Accepter
+                        </button>
+                        <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-300 flex-1">
+                            Refuser
+                        </button>
                     </div>
                 </div>
-                
-                <!-- Request 2 -->
-                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h3 class="font-bold text-gray-800">Maison traditionnelle</h3>
-                            <p class="text-gray-600 text-sm">Rabat, Maroc</p>
-                        </div>
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">En attente</span>
+                @endforeach
+                @empty
+                    <!-- No Announcements -->
+                    <div class="col-span-2 py-8 text-center">
+                        <p class="text-gray-500 text-lg">Aucune annonce disponible pour le moment.</p>
                     </div>
-                    <div class="mb-4">
-                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-user mr-2 text-blue-500"></i>Marie Lambert</p>
-                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-calendar-alt mr-2 text-blue-500"></i>10 juillet - 20 juillet 2030 (10 nuits)</p>
-                        <p class="text-gray-600 text-sm"><i class="fas fa-euro-sign mr-2 text-blue-500"></i>850 € (85 €/nuit)</p>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-300 flex-1">Accepter</button>
-                        <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-300 flex-1">Refuser</button>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </div>
 
@@ -494,5 +495,30 @@ document.getElementById('disponible_au').addEventListener('change', function() {
 });
 
     </script>
+
+<script>
+    // Function to update notification count
+    function updateNotificationCount() {
+        fetch('{{ route("notifications.unreadCount") }}')
+            .then(response => response.json())
+            .then(data => {
+                const counter = document.getElementById('notification-counter');
+                if (data.count > 0) {
+                    counter.textContent = data.count;
+                    counter.classList.remove('hidden');
+                } else {
+                    counter.classList.add('hidden');
+                }
+            });
+    }
+
+    // Update on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateNotificationCount();
+        
+        // Optionally poll for new notifications every minute
+        setInterval(updateNotificationCount, 60000);
+    });
+</script>
 </body>
 </html>
