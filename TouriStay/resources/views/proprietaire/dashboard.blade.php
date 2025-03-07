@@ -243,7 +243,7 @@
                 @empty
                     <!-- No Announcements -->
                     <div class="col-span-2 py-8 text-center">
-                        <p class="text-gray-500 text-lg">Aucune annonce disponible pour le moment.</p>
+                        <p class="text-gray-500 text-lg">Aucune reservation disponible pour le moment.</p>
                     </div>
                 @endforelse
             </div>
