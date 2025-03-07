@@ -121,32 +121,4 @@ class TouristeController extends Controller
         return view('touriste.favorites', compact('annonces', 'favorites'));
     }
     
-    public function profile()
-    {
-        $user = Auth::user();
-        return view('touriste.profile', compact('user'));
-    }
-    
-    public function updateProfile(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-        
-        $user = Auth::user();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        
-        if ($request->hasFile('avatar')) {
-            // Store the new avatar
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = $avatarPath;
-        }
-        
-        $user->save();
-        
-        return redirect()->route('touriste.profile')->with('success', 'Profil mis à jour avec succès!');
-    }
 }
